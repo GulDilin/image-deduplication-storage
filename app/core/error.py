@@ -13,6 +13,14 @@ class ItemNotFound(Exception):
 
 
 @dataclass
+class ItemAlreadyExists(Exception):
+    model: str = "Item"
+
+    def __str__(self) -> str:
+        return message.ERROR_ITEM_ALREADY_EXISTS.format(entity=self.model)
+
+
+@dataclass
 class IncorrectDataFormat(Exception):
     allowed_formats: Iterable = None
     format: str = None
@@ -34,3 +42,8 @@ class ImageNameUniqueCheckFailed(Exception):
 class StorageSaveError(Exception):
     def __str__(self) -> str:
         return message.ERROR_STORAGE_SAVE
+
+
+class ResizingSizeError(Exception):
+    def __str__(self) -> str:
+        return message.ERROR_RESIZING_SIZE

@@ -1,4 +1,5 @@
 from PIL import Image
+from app.core import error
 
 
 def resize_image(
@@ -20,15 +21,17 @@ def get_scaled_size(input_image_path, scale):
 
 
 def get_new_size(input_image_path, width, height):
-    if width and height:
-        return width, height
-    with Image.open(input_image_path) as original_image:
-        if not width and not height:
-            raise ValueError('width or height or both are required')
-        elif not width:
-            k = height / original_image.size[1]
-            width = int(k * original_image.size[0])
-        elif not height:
-            k = width / original_image.size[0]
-            height = int(k * original_image.size[1])
-        return width, height
+    MAX_SIZE = 10000
+    if not (width and height):
+        with Image.open(input_image_path) as original_image:
+            if not width and not height:
+                raise ValueError('width or height or both are required')
+            elif not width:
+                k = height / original_image.size[1]
+                width = int(k * original_image.size[0])
+            elif not height:
+                k = width / original_image.size[0]
+                height = int(k * original_image.size[1])
+    if width > MAX_SIZE or height > MAX_SIZE or width < 0 or height < 0:
+        raise error.ResizingSizeError()
+    return width, height
