@@ -41,9 +41,9 @@ options:
 
 `imagehash_test` - script for generate functions for testing with imagehash
 
-`images_size_test_new.py` - Script for get hash algs performance statistics
+`images_size_test.py` - Script for get hash algs performance statistics
 
-- Before use need to add argument to `HashAlgTester` in `images_size_test_new.py`
+- Before use need to add argument to `HashAlgTester` in `images_size_test.py`
 ```shell
 ### here import functions dict from hashlib_test or imagehash_test
 HashAlgTester(hash_functions=functions)
