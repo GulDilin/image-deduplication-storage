@@ -1,12 +1,12 @@
 import os.path
 
 from fastapi import APIRouter, Depends, UploadFile
-from fastapi.responses import FileResponse
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import FileResponse
 
-from app import schemas, models
+from app import models, schemas
 from app.api import deps
-from app.core import util, image_resizer, hasher
+from app.core import hasher, image_resizer, util
 from app.crud import ImageCRUD, ThumbnailCRUD
 
 router = APIRouter()

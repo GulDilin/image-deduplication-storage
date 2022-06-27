@@ -1,7 +1,8 @@
-from .util import TimeStamped
 from uuid import UUID
-from .util import ValuesEnum
+
 from pydantic import BaseModel
+
+from .util import TimeStamped, ValuesEnum
 
 
 class Image(TimeStamped):

@@ -1,7 +1,7 @@
-from typing import Optional, List
-from fastapi import Request
-from pydantic import BaseModel, AnyHttpUrl, validator
+from typing import List, Optional
 
+from fastapi import Request
+from pydantic import AnyHttpUrl, BaseModel, validator
 from starlette.datastructures import URL
 
 

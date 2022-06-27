@@ -1,18 +1,17 @@
-from typing import Any, Callable, Iterable, List
+from typing import Any, Callable, Iterable, List, Type
 from uuid import UUID
 
 from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel
 from sqlalchemy import delete, func, or_, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.selectable import Select
 
-from app.core import error
 from app import schemas
+from app.core import error
 from app.db.base_class import Base
-from pydantic import BaseModel
-from typing import Type
 
 
 class DefaultCRUD:

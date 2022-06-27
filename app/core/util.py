@@ -1,7 +1,7 @@
 import os
 
-from app.core.config import settings
 from app import models
+from app.core.config import settings
 
 
 def get_file_type(filename):

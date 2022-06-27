@@ -1,12 +1,13 @@
 from typing import AsyncGenerator, Union
 from uuid import UUID
+
 from fastapi import Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud import ImageCRUD, ThumbnailCRUD
-from app.models import Image
 from app import schemas
+from app.crud import ImageCRUD, ThumbnailCRUD
 from app.db.session import async_session
+from app.models import Image
 
 
 async def get_db_session() -> AsyncSession:

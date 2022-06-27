@@ -1,6 +1,7 @@
 import hashlib
-import numpy as np
+
 import cv2
+import numpy as np
 
 
 def get_image_hash(bytes_file_data: bytes) -> str:
