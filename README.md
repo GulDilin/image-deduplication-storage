@@ -27,8 +27,22 @@ example `C:\Program Files\Python39`)
 6. Create file `.env` in project root and copy data from file `.env.example`
 7. In that file configure postgres credentials and database names
 8. Run alembic migrations with command `poetry run alembic upgrade head`
-10. Run `uvicorn app.main:app --reload`. As default it starts at `http://localhost:8000`
-11. To access docs go to `http://localhost:8000/docs`
+9. Run `uvicorn app.main:app --reload`. As default it starts at `http://localhost:8000`
+10. To access docs go to `http://localhost:8000/docs`
+
+### `.env.example` content
+```shell
+ENVIRONMENT - environment type one of values (DEV, PYTEST, PRODUCTION)
+BACKEND_CORS_ORIGINS - str or list of str for allowed cors domains
+STORAGE_DIR - str, path for images dir
+THUMBNAILS_DIR - str, path for thumbnails dir
+POSTGRES_SERVER - your db server domain
+POSTGRES_PORT - your db server port
+POSTGRES_USER - your db user
+POSTGRES_PASSWORD - your db user password
+POSTGRES_DB - name of created db for project
+AUTORUN_MIGRATIONS - bool, flag for run migrations
+```
 
 ### Start command
 

@@ -24,8 +24,6 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
-app.mount("/stored", StaticFiles(directory=settings.STORAGE_DIR), name="stored")
-
 # Set all CORS enabled origins
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
@@ -36,9 +34,15 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-logger.info('Start')
-
 app.include_router(api_router, prefix="/api")
+
+
+@app.on_event("startup")
+async def startup():
+    if not os.path.exists(settings.STORAGE_DIR):
+        os.makedirs(settings.STORAGE_DIR)
+    if not os.path.exists(settings.THUMBNAILS_DIR):
+        os.makedirs(settings.THUMBNAILS_DIR)
 
 
 def handle_default_error(exc: Exception, status_code: int, headers: dict = None) -> JSONResponse:
