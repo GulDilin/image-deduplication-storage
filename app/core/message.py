@@ -11,6 +11,7 @@ ERROR_INCORRECT_DATA_FORMAT = '{format} is not one of allowed {model} formats {f
 ERROR_IMAGE_NAME_UNIQUE = 'Image name need to be unique'
 ERROR_STORAGE_SAVE = 'Saving data to storage failed'
 ERROR_RESIZING_SIZE = 'Resizing size is overflowed or negative'
+ERROR_FILE_NOT_FOUND = 'File not found'
 
 """
 MODELS

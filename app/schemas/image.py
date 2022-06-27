@@ -20,6 +20,10 @@ class ImageUpdate(BaseModel):
     name: str
 
 
+class ImageCompareStatus(BaseModel):
+    equal: bool
+
+
 class Thumbnail(TimeStamped):
     id: UUID
     width: int

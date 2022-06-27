@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api.api import api_router
-from app.core import error
+from app.core import error, message
 from app.core.config import settings
 
 import pydantic
@@ -45,6 +45,7 @@ async def startup():
 
 
 def handle_default_error(exc: Exception, status_code: int, headers: dict = None) -> JSONResponse:
+    traceback.print_exc()
     return JSONResponse(
         status_code=status_code,
         content={'detail': str(exc)},
@@ -89,3 +90,8 @@ async def entity_entry_not_found_exception_handler(request: Request, exc: Except
 @app.exception_handler(error.StorageSaveError)
 async def save_exception_handler(request: Request, exc: Exception) -> JSONResponse:  # noqa
     return handle_default_error(exc, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@app.exception_handler(FileNotFoundError)
+async def save_exception_handler(request: Request, exc: Exception) -> JSONResponse:  # noqa
+    return handle_default_error(message.ERROR_FILE_NOT_FOUND, status.HTTP_500_INTERNAL_SERVER_ERROR)
