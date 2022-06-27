@@ -5,7 +5,6 @@ description = ""
 authors = ["GulDilin <zhenyagurin@gmail.com>"]
 
 [tool.poetry.dependencies]
-ImageHash = "^4.2.1"
 python = "^3.10"
 fastapi = "^0.78.0"
 SQLAlchemy = "^1.4.36"
