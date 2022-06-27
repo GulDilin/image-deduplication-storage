@@ -1,6 +1,7 @@
 import os
 
 from app import models
+from app.core import error
 from app.core.config import settings
 
 
@@ -9,9 +10,12 @@ def get_file_type(filename):
 
 
 def save_to_storage(dir_path, filename, data):
-    path = os.path.join(dir_path, filename)
-    with open(path, 'wb') as f:
-        f.write(data)
+    try:
+        path = os.path.join(dir_path, filename)
+        with open(path, 'wb') as f:
+            f.write(data)
+    except Exception:
+        raise error.StorageSaveError()
 
 
 def save_image_to_storage(filename, data):

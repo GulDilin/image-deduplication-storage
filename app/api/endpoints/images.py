@@ -1,4 +1,6 @@
 import os.path
+import traceback
+from typing import Optional
 
 from fastapi import APIRouter, Depends, UploadFile
 from fastapi.encoders import jsonable_encoder
@@ -32,7 +34,7 @@ async def get_image(
     return schemas.Image(**jsonable_encoder(image))
 
 
-@router.get('/{image_id}/file', response_model=FileResponse)
+@router.get('/{image_id}/file')
 async def get_image_file(
         scale: float = None,
         w: int = None,
@@ -58,23 +60,30 @@ async def get_image_file(
             path = util.get_thumbnail_path(thumbnail)
         return FileResponse(
             path=path,
-            headers={"Content-Disposition": f"attachment; filename={os.path.basename(path)}"}
+            headers={
+                'Content-Type': f'image/{image.file_type}'
+            }
         )
-    except:
+    except Exception as e:
         await image_crud.db_session.rollback()
+        traceback.print_exc()
+        raise e
 
 
 @router.post('/', response_model=schemas.Image)
 async def create_image(
         file: UploadFile,
-        name: str,
+        name: Optional[str] = None,
         image_crud: ImageCRUD = Depends(deps.get_image_crud),
 ) -> schemas.Image:
     try:
         file_data = file.file.read()
         hash_value = hasher.get_image_hash(file_data)
+        print(f'{hash_value=}')
         if await image_crud.has_by(hash=hash_value):
+            print('image found')
             image = await image_crud.get_by(hash=hash_value)
+            print(f'{image=}')
             await image_crud.increment_counter(image_id=image.id)
             return schemas.Image(**jsonable_encoder(image))
         image = await image_crud.create_and_write(
@@ -84,8 +93,10 @@ async def create_image(
             name=name,
         )
         return schemas.Image(**jsonable_encoder(image))
-    except:
+    except Exception as e:
         await image_crud.db_session.rollback()
+        traceback.print_exc()
+        raise e
 
 
 @router.put('/{image_id}', response_model=schemas.Image)

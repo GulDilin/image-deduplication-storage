@@ -60,7 +60,9 @@ class DefaultCRUD:
             operator: any = select,
             **kwargs
     ) -> Select:
-        q = query or operator(selectable or self.model)
+        if selectable is None:
+            selectable = self.model
+        q = query or operator(selectable)
         q = self._define_filter(query=q, filter_dict=kwargs, and_=and_)
         q = self._define_prefetch_fields(query=q, prefetch_fields=prefetch_fields)
         q = self._define_query_modifiers(query=q, query_modifiers=query_modifiers)
@@ -94,25 +96,7 @@ class DefaultCRUD:
         return bool((await self.db_session.execute(select(self.model).where(self.model.id == item_id))).scalar())
 
     async def has_by(self, **kwargs) -> bool:
-        return bool(await self.get_by(**kwargs))
-
-    async def get_all_with_pagination(
-            self,
-            *args,
-            wrapper_class: Type[BaseModel],
-            offset: int = 0,
-            limit: int = None,
-            method: Callable = None,
-            **kwargs
-    ) -> schemas.PaginatedResponse:
-        if not method:
-            method = self.get_all
-        count = await self.count(**kwargs)
-        results = [
-            wrapper_class(**jsonable_encoder(it)) for it in
-            await method(offset=offset, limit=limit, *args, **kwargs)
-        ]
-        return schemas.PaginatedResponse(results=results, count=count)
+        return bool((await self.db_session.execute(self._create_query_by(**kwargs))).scalar())
 
     async def _add_all(self, objects: Any) -> Any:
         try:
@@ -134,7 +118,7 @@ class DefaultCRUD:
             raise e
 
     async def _update(self, item_id: UUID, obj_in: Any) -> Any:
-        if not self.has(item_id):
+        if not await self.has(item_id):
             raise error.ItemNotFound(model=self.model_name)
         q = (
             update(self.model)
@@ -156,6 +140,29 @@ class DefaultCRUD:
         await self.db_session.delete(item)
         await self.db_session.flush()  # noqa
 
+    async def get_all_with_pagination(
+        self,
+        *args,
+        wrapper_class: Type[BaseModel],
+        offset: int = 0,
+        limit: int = None,
+        method: Callable = None,
+        **kwargs
+    ) -> schemas.PaginatedResponse:
+        if not method:
+            method = self.get_all
+        amount = await self.count(**kwargs)
+        results = [
+            wrapper_class(**jsonable_encoder(it)) for it in
+            await method(offset=offset, limit=limit, *args, **kwargs)
+        ]
+        return schemas.PaginatedResponse(results=results, amount=amount)
+
     async def _delete_by(self, **kwargs):
         await self.db_session.execute(self._create_query_by(operator=delete, **kwargs))
         await self.db_session.flush()  # noqa
+
+    async def _get_or_create(self, **kwargs):
+        if obj := await self.get_by(**kwargs):
+            return obj
+        return await self._create(kwargs)

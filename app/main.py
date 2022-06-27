@@ -4,7 +4,6 @@ import traceback
 
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api.api import api_router
@@ -71,3 +70,8 @@ async def request_error_handler(request: Request, exc: Exception) -> JSONRespons
 @app.exception_handler(error.ItemNotFound)
 async def entity_entry_not_found_exception_handler(request: Request, exc: Exception) -> JSONResponse:  # noqa
     return handle_default_error(exc, status.HTTP_404_NOT_FOUND)
+
+
+@app.exception_handler(error.StorageSaveError)
+async def save_exception_handler(request: Request, exc: Exception) -> JSONResponse:  # noqa
+    return handle_default_error(exc, status.HTTP_500_INTERNAL_SERVER_ERROR)

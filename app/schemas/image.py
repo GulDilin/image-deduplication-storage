@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -9,9 +10,9 @@ class Image(TimeStamped):
     id: UUID
     original_filename: str
     file_type: str
-    name: str
+    name: Optional[str]
     hash: str
-    size: int
+    size: Optional[int]
     duplicate_counter: int
 
 

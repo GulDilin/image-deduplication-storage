@@ -11,7 +11,7 @@ class Image(TimeStamped):
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
     original_filename = Column(String(300), unique=False)
     file_type = Column(String(50), unique=False)
-    name = Column(String(300), unique=True)
+    name = Column(String(300), unique=True, nullable=True)
     hash = Column(String(512), unique=True, index=True)
     size = Column(Integer)
     duplicate_counter = Column(Integer, default=1, server_default="1", nullable=False)
@@ -28,7 +28,7 @@ class Thumbnail(TimeStamped):
     height = Column(Integer)
     size = Column(Integer)
     image_id = Column(UUID(as_uuid=True), ForeignKey("image.id"), nullable=False, index=True)
-    image = relationship('Image', back_populates='thumbnail', cascade="delete")
+    image = relationship('Image', back_populates='thumbnails', cascade="delete")
 
     def __repr__(self):
         return '<Thumbnail %r, %r>' % (self.id, self.name)

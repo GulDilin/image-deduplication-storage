@@ -16,6 +16,7 @@ class ImageCRUD(DefaultCRUD):
 
     async def raise_for_incorrect_format(self, file_name: str) -> None:
         file_type = util.get_file_type(file_name)
+        print(f'{schemas.ImageFormats.values()=}{file_type=}')
         if file_type not in schemas.ImageFormats.values():
             raise error.IncorrectDataFormat(
                 allowed_formats=schemas.ImageFormats.values(),
@@ -30,8 +31,9 @@ class ImageCRUD(DefaultCRUD):
             file_data,
             name: str = None,
     ) -> Image:
+        print('create_and_write')
         file_type = util.get_file_type(original_filename)
-        await self.raise_for_incorrect_format(file_type)
+        await self.raise_for_incorrect_format(original_filename)
         item = await self._create(item=Image(
             original_filename=original_filename[-300:],
             file_type=file_type,
@@ -40,7 +42,7 @@ class ImageCRUD(DefaultCRUD):
         ))
         filename = util.generate_image_filename(image_id=item.id, file_type=file_type)
         util.save_image_to_storage(filename=filename, data=file_data)
-        item.size = os.path.getsize(filename)
+        item.size = os.path.getsize(util.get_image_path(item))
         return item
 
     async def create(
@@ -50,7 +52,7 @@ class ImageCRUD(DefaultCRUD):
             name: str = None,
     ) -> Image:
         file_type = util.get_file_type(original_filename)
-        await self.raise_for_incorrect_format(file_type)
+        await self.raise_for_incorrect_format(original_filename)
         return await self._create(item=Image(
             original_filename=original_filename[-300:],
             file_type=file_type,
@@ -106,8 +108,8 @@ class ThumbnailCRUD(DefaultCRUD):
             file_type=file_type,
         ))
         filename = util.generate_image_filename(image_id=item.id, file_type=file_type)
-        util.save_image_to_storage(filename=filename, data=file_data)
-        item.size = os.path.getsize(filename)
+        util.save_thumbnail_to_storage(filename=filename, data=file_data)
+        item.size = os.path.getsize(util.get_thumbnail_path(item))
         return item
 
     async def create(

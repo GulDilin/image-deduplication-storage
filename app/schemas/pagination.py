@@ -23,12 +23,12 @@ class PaginationData(BaseModel):
             raise ValueError(f"{field} need to be non-negative")
 
     @validator("limit")
-    def validate_limit_offset(cls, v):
+    def validate_limit(cls, v):
         PaginationData._raise_for_negative(v, 'limit')
         return v
 
     @validator("offset")
-    def validate_limit_offset(cls, v):
+    def validate_offset(cls, v):
         PaginationData._raise_for_negative(v, 'offset')
         return v
 

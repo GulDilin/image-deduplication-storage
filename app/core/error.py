@@ -29,3 +29,8 @@ class IncorrectDataFormat(Exception):
 class ImageNameUniqueCheckFailed(Exception):
     def __str__(self) -> str:
         return message.ERROR_IMAGE_NAME_UNIQUE
+
+
+class StorageSaveError(Exception):
+    def __str__(self) -> str:
+        return message.ERROR_STORAGE_SAVE
