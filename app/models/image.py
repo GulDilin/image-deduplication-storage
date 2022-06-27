@@ -28,7 +28,7 @@ class Thumbnail(TimeStamped):
     height = Column(Integer)
     size = Column(Integer)
     image_id = Column(UUID(as_uuid=True), ForeignKey("image.id"), nullable=False, index=True)
-    image = relationship('Image', back_populates='thumbnails', cascade="delete")
+    image = relationship('Image', back_populates='thumbnails')
 
     def __repr__(self):
         return '<Thumbnail %r, %r>' % (self.id, self.name)

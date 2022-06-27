@@ -10,7 +10,7 @@ from app.api.api import api_router
 from app.core import error
 from app.core.config import settings
 
-logger = logging.getLogger(__name__)
+import pydantic
 
 # automatic run migrations at start, useful for docker
 if settings.AUTORUN_MIGRATIONS and (rc := os.system('python -m alembic upgrade head') != 0):
@@ -62,9 +62,23 @@ async def internal_server_error_handler(request: Request, exc: Exception) -> JSO
 
 
 @app.exception_handler(error.IncorrectDataFormat)
+@app.exception_handler(error.ResizingSizeError)
+@app.exception_handler(error.ItemAlreadyExists)
 @app.exception_handler(ValueError)
 async def request_error_handler(request: Request, exc: Exception) -> JSONResponse:  # noqa
     return handle_default_error(exc, status.HTTP_400_BAD_REQUEST)
+
+
+@app.exception_handler(pydantic.error_wrappers.ValidationError)
+async def pydantic_validation_error_handler(
+        request: Request,  # noqa
+        exc: pydantic.error_wrappers.ValidationError
+) -> JSONResponse:
+    traceback.print_exc()
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={'detail': exc.errors()},
+    )
 
 
 @app.exception_handler(error.ItemNotFound)

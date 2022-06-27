@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import schemas
 from app.core import error, message, util
 from app.models import Image, Thumbnail
+from fastapi.encoders import jsonable_encoder
 
 from .common import DefaultCRUD
 
@@ -60,17 +61,24 @@ class ImageCRUD(DefaultCRUD):
             name=name,
         ))
 
-    async def increment_counter(self, image_id: UUID):
+    async def update_counter_by_step(self, image_id: UUID, step: int):
         try:
             image = await self.get(image_id)
-            await self._update(item_id=image_id, obj_in={'duplicate_counter': image.duplicate_counter + 1})
-        except:
+            await self._update(item_id=image_id, obj_in={'duplicate_counter': image.duplicate_counter + step})
+        except Exception as e:
             await self.db_session.rollback()
+            raise e
+
+    async def increment_counter(self, image_id: UUID):
+        await self.update_counter_by_step(image_id=image_id, step=1)
+
+    async def decrement_counter(self, image_id: UUID):
+        await self.update_counter_by_step(image_id=image_id, step=-1)
 
     async def update(self, image_id: UUID, obj_in: schemas.ImageUpdate) -> Image:
         if await self.has_by(name=obj_in.name):
             raise error.ImageNameUniqueCheckFailed()
-        return await self._update(item_id=image_id, obj_in=obj_in)
+        return await self._update(item_id=image_id, obj_in=jsonable_encoder(obj_in))
 
     @staticmethod
     async def delete_content(item: Image) -> None:

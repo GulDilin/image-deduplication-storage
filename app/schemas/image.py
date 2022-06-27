@@ -28,9 +28,9 @@ class Thumbnail(TimeStamped):
 
 
 class ThumbnailCreate(BaseModel):
-    width: int
-    height: int
-    image_id: UUID
+    scale: Optional[float]
+    width: Optional[int]
+    height: Optional[int]
 
 
 class ImageFormats(ValuesEnum):
