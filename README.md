@@ -8,11 +8,13 @@ It is helpful for 3d rendering testing or for another cases to store images with
 - Add unique name for image to get without id
 - Get images info
 - Get images file
-- Delete images with duplplication safety 
+- Delete images with duplication safety 
 - Create image thumbnails with different sizes
 - Get image thumbnails info
 - Get image thumbnails files
 - Delete thumbnail
+- Compare images
+- Get compare images difference pixels
 
 
 ## How to run development environment
