@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "image-deduplication-storage"
+version = "0.1.0"
+description = ""
+authors = ["GulDilin <zhenyagurin@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.78.0"
+SQLAlchemy = "^1.4.36"
+alembic = "^1.7.7"
+asyncpg = "^0.25.0"
+uvicorn = { extras = ["standard"], version = "^0.17.6" }
+pydentic = { extras = ["dotenv"], version = "^0.0.1-alpha.3" }
+psycopg2-binary = "^2.9.3"
+toml = "^0.10.2"
+opencv-python = "^4.5.5"
+Pillow = "^9.1.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+flake8 = "^4.0.1"
+isort = "^5.10.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
