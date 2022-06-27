@@ -2,6 +2,7 @@ import logging
 import os
 import traceback
 
+import pydantic
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
@@ -9,8 +10,6 @@ from starlette.middleware.cors import CORSMiddleware
 from app.api.api import api_router
 from app.core import error, message
 from app.core.config import settings
-
-import pydantic
 
 # automatic run migrations at start, useful for docker
 if settings.AUTORUN_MIGRATIONS and (rc := os.system('python -m alembic upgrade head') != 0):

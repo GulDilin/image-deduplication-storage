@@ -1,4 +1,5 @@
 import os.path
+import tempfile
 import traceback
 import uuid
 from typing import Optional
@@ -9,12 +10,10 @@ from fastapi.responses import FileResponse
 
 from app import models, schemas
 from app.api import deps
-from app.core import hasher, image_resizer, util, error, message, image_comparator
+from app.core import (error, hasher, image_comparator, image_resizer, message,
+                      util)
 from app.core.config import settings
 from app.crud import ImageCRUD, ThumbnailCRUD
-
-import tempfile
-
 
 router = APIRouter()
 
