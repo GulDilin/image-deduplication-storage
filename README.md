@@ -50,6 +50,12 @@ AUTORUN_MIGRATIONS - bool, flag for run migrations
 uvicorn app.main:app --reload
 ```
 
+### Docs links
+```
+http://127.0.0.1:8000/docs
+http://127.0.0.1:8000/redoc
+```
+
 ### Add dependency
 
 ```shell
