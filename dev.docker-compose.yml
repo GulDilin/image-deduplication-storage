@@ -1,0 +1,76 @@
+version: "3.9"
+services:
+  image-storage-db:
+    restart: unless-stopped
+    container_name: image-storage-db
+    image: postgres:13
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=1000"
+      - "-c"
+      - "shared_buffers=1GB"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=image_dedup_storage
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: pg_isready -U postgres -d image_dedup_storage
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+  image-storage-api:
+    restart: always
+    container_name: image-storage-api
+    build:
+      context: .
+      args:
+        - POSTGRES_SERVER=image-storage-db
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_PORT=5432
+        - POSTGRES_DB=image_dedup_storage
+        - BACKEND_CORS_ORIGINS="[\"http://localhost:8080\",\"https://localhost:8080\"]"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    command:
+      - "uvicorn"
+      - "app.main:app"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8080"
+      - "--reload"
+      - "--workers"
+      - "4"
+    shm_size: '2gb'
+    depends_on:
+      image-storage-db:
+        condition: service_healthy
+    links:
+      - image-storage-db
+    ports:
+      - "8000:8080"
+    volumes:
+      - ./app:/image-storage/app
+      - ./.storage:/image-storage/.storage
+    healthcheck:
+      test: curl -sS image-storage-api/docs || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"

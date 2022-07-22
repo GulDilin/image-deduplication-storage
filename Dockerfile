@@ -1,0 +1,42 @@
+FROM python:3.10 as build
+ENV TZ=Europe/Moscow
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+ENV ROOT_DIR "image-storage"
+WORKDIR /${ROOT_DIR}
+
+RUN apt-get update
+RUN apt-get install ffmpeg libsm6 libxext6  -y
+
+FROM build as deps
+
+COPY ./requirements.txt /${ROOT_DIR}/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /${ROOT_DIR}/requirements.txt
+
+from deps as target
+
+ARG ENVIRONMENT=${ENVIRONMENT:-PRODUCTION}
+ARG BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS:-*}
+ARG POSTGRES_SERVER=${POSTGRES_SERVER}
+ARG POSTGRES_USER=${POSTGRES_USER}
+ARG POSTGRES_DB=${POSTGRES_DB}
+ARG POSTGRES_PORT=${POSTGRES_PORT}
+ARG POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+ARG AUTORUN_MIGRATIONS=${AUTORUN_MIGRATIONS:-True}
+ARG WORKERS=${WORKERS:-4}
+
+ENV WORKERS=$WORKERS
+
+COPY . /${ROOT_DIR}
+
+RUN echo "ENVIRONMENT=$ENVIRONMENT\n \
+    BACKEND_CORS_ORIGINS=$BACKEND_CORS_ORIGINS\n \
+    POSTGRES_SERVER=$POSTGRES_SERVER\n \
+    POSTGRES_PORT=$POSTGRES_PORT\n \
+    POSTGRES_USER=$POSTGRES_USER\n \
+    POSTGRES_DB=$POSTGRES_DB\n \
+    POSTGRES_PASSWORD=$POSTGRES_PASSWORD\n \
+    AUTORUN_MIGRATIONS=$AUTORUN_MIGRATIONS" > /${ROOT_DIR}/.env
+
+EXPOSE 8080
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port 8080 --workers $WORKERS"]

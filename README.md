@@ -3,6 +3,26 @@
 System to storage images with hash-based deduplication. 
 It is helpful for 3d rendering testing or for another cases to store images with a log of duplicated images.
 
+## How to run dev environment with docker
+1. Install `docker` and `docker-compose`
+```
+Windows
+https://docs.docker.com/desktop/install/windows-install/
+
+Linux
+https://docs.docker.com/engine/install/ubuntu/
+```
+4. Build docker-compose images
+```
+docker-compose -f dev.docker-compose.yml build
+```
+5. Up docker-compose images
+```
+docker-compose -f dev.docker-compose.yml up -d
+```
+6. Now you can access url `localhost:8000/docs`
+
+
 ## How to run development environment
 
 1. Install `python 3.10`
