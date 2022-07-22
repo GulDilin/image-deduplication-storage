@@ -16,6 +16,10 @@ class Image(TimeStamped):
     duplicate_counter: int
 
 
+class ImageCompare(BaseModel):
+    equals: bool
+
+
 class ImageUpdate(BaseModel):
     name: str
 

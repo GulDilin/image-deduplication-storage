@@ -32,6 +32,12 @@ async def get_path_image(
 ) -> Image:
     return await image_crud.get_by(**{'id' if schemas.is_valid_uuid(str(image_id)) else 'name': image_id})
 
+async def get_path_image(
+        image_crud: ImageCRUD = Depends(get_image_crud),
+        image2_id: Union[UUID, str] = Path(None, title="Image 2 ID")
+) -> Image:
+    return await image_crud.get_by(**{'id' if schemas.is_valid_uuid(str(image2_id)) else 'name': image2_id})
+
 
 async def get_path_thumbnail(
         image: Image = Depends(get_path_image),
