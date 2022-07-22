@@ -1,5 +1,7 @@
 import os.path
+import tempfile
 import traceback
+import uuid
 from typing import Optional
 
 from fastapi import APIRouter, Depends, UploadFile
@@ -8,7 +10,9 @@ from fastapi.responses import FileResponse
 
 from app import models, schemas
 from app.api import deps
-from app.core import hasher, image_resizer, util, error, message
+from app.core import (error, hasher, image_comparator, image_resizer, message,
+                      util)
+from app.core.config import settings
 from app.crud import ImageCRUD, ThumbnailCRUD
 
 router = APIRouter()
@@ -176,3 +180,33 @@ async def delete_thumbnail(
         thumbnail: models.Thumbnail = Depends(deps.get_path_thumbnail),
 ) -> None:
     await thumbnail_crud.delete_with_content(thumbnail.id)
+
+
+@router.get('/{image_id}/compare/{image2_id}', response_model=schemas.ImageCompareStatus)
+async def compare_images(
+        image: models.Image = Depends(deps.get_path_image),
+        image2: models.Image = Depends(deps.get_path_image_2),
+) -> schemas.ImageCompareStatus:
+    return schemas.ImageCompareStatus(equal=image_comparator.are_images_equal(
+        util.get_image_path(image),
+        util.get_image_path(image2),
+    ))
+
+
+@router.get('/{image_id}/compare/{image2_id}/file')
+async def create_image_thumbnail(
+        image: models.Image = Depends(deps.get_path_image),
+        image2: models.Image = Depends(deps.get_path_image_2),
+) -> FileResponse:
+    out_path = os.path.join(settings.TEMP_DIR, str(uuid.uuid4()))
+    image_comparator.get_compare_image(
+        util.get_image_path(image),
+        util.get_image_path(image2),
+        out_path
+    )
+    return FileResponse(
+        path=out_path,
+        headers={
+            'Content-Type': f'image/jpg'
+        }
+    )

@@ -3,6 +3,7 @@
 System to storage images with hash-based deduplication. 
 It is helpful for 3d rendering testing or for another cases to store images with a log of duplicated images.
 
+
 ## How to run dev environment with docker
 1. Install `docker` and `docker-compose`
 ```
@@ -21,6 +22,21 @@ docker-compose -f dev.docker-compose.yml build
 docker-compose -f dev.docker-compose.yml up -d
 ```
 6. Now you can access url `localhost:8000/docs`
+
+
+## Abilities
+- Store images with deduplication
+- Add unique name for image to get without id
+- Get images info
+- Get images file
+- Delete images with duplication safety 
+- Create image thumbnails with different sizes
+- Get image thumbnails info
+- Get image thumbnails files
+- Delete thumbnail
+- Compare images
+- Get compare images difference pixels
+>>>>>>> f84484588893f7da6047fa68080d1e88b1b74c94
 
 
 ## How to run development environment

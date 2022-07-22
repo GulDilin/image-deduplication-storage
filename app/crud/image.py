@@ -1,12 +1,12 @@
 import os
 from uuid import UUID
 
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import schemas
 from app.core import error, message, util
 from app.models import Image, Thumbnail
-from fastapi.encoders import jsonable_encoder
 
 from .common import DefaultCRUD
 

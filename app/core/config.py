@@ -1,4 +1,5 @@
 import os.path
+import tempfile
 from pathlib import Path
 from typing import Literal, Union
 
@@ -23,6 +24,7 @@ class Settings(BaseSettings):
 
     STORAGE_DIR: str = os.path.join(PROJECT_DIR, '.storage')
     THUMBNAILS_DIR: str = os.path.join(PROJECT_DIR, '.thumbnails')
+    TEMP_DIR: str = tempfile.mkdtemp(prefix="image-storage-compared-")
 
     POSTGRES_SERVER: str
     POSTGRES_USER: str
