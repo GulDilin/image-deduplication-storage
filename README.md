@@ -36,7 +36,7 @@ docker-compose -f dev.docker-compose.yml up -d
 - Delete thumbnail
 - Compare images
 - Get compare images difference pixels
->>>>>>> f84484588893f7da6047fa68080d1e88b1b74c94
+
 
 
 ## How to run development environment
