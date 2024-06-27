@@ -86,3 +86,4 @@ venv.bak/
 # Project specific
 .storage
 .thumbnails
+.env.production
