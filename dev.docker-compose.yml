@@ -38,11 +38,6 @@ services:
         - POSTGRES_PORT=5432
         - POSTGRES_DB=image_dedup_storage
         - BACKEND_CORS_ORIGINS="[\"http://localhost:8080\",\"https://localhost:8080\"]"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
     command:
       - "uvicorn"
       - "app.main:app"
@@ -57,8 +52,6 @@ services:
     depends_on:
       image-storage-db:
         condition: service_healthy
-    links:
-      - image-storage-db
     ports:
       - "8000:8080"
     volumes:
